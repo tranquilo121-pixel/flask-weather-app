@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Weather</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Current Weather</h1>
+      <form method="post" class="search">
+        <input name="city" placeholder="Enter city (e.g. London)" value="{{ city or '' }}" />
+        <button type="submit">Search</button>
+      </form>
+
+      {% if error %}
+        <div class="error">{{ error }}</div>
+      {% endif %}
+
+      {% if weather %}
+        <section class="result">
+          <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
+          <div class="meta">
+            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="icon" />
+            <div class="temps">
+              <div class="temp">{{ weather.temp }}°C</div>
+              <div class="desc">{{ weather.description }}</div>
+            </div>
+          </div>
+        </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
