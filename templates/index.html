@@ -3,80 +3,102 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Weather</title>
+    <title>Weather App</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
-    <main class="container">
-      <h1>Current Weather</h1>
 
-      <form method="post" class="search" id="search-form">
-        <input name="city" id="city-input" placeholder="Search a city..." value="{{ city or '' }}" autocomplete="off" />
-        <input type="hidden" name="lat" id="lat-input" />
-        <input type="hidden" name="lon" id="lon-input" />
-        <button type="button" class="gps-btn" id="gps-btn" title="Use my location">📍</button>
-        <button type="submit">Search</button>
-      </form>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Smarter Weather<br>for Everywhere</h1>
+        <p>Real-time forecasts, humidity, wind &amp; 5-day outlook</p>
+      </div>
+    </section>
+
+    <section class="main">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <h2>Weather forecast</h2>
+          <div class="unit-toggle">
+            <span class="unit active">°C</span>
+            <span class="unit">°F</span>
+          </div>
+        </div>
+        <form method="post" class="search-bar" id="search-form">
+          <input type="hidden" name="lat" id="lat-input" />
+          <input type="hidden" name="lon" id="lon-input" />
+          <button type="button" class="pin-btn" id="gps-btn" title="Use my location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          </button>
+          {% if weather %}<span class="current-loc">{{ weather.city }}, {{ weather.country }}</span>{% endif %}
+          <input name="city" id="city-input" placeholder="Search City" value="" autocomplete="off" />
+          <button type="submit" class="search-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </form>
+      </div>
 
       {% if error %}
-        <div class="error">{{ error }}</div>
+        <div class="error-bar">{{ error }}</div>
+      {% endif %}
+
+      {% if forecast %}
+      <div class="day-strip">
+        {% for day in forecast %}
+        <div class="day-pill {% if loop.first %}active{% endif %}">
+          <span class="day-name">{{ day.day_name }}</span>
+          <span class="day-temp">{{ day.temp_max }}°</span>
+          <img src="https://openweathermap.org/img/wn/{{ day.icon }}.png" alt="" />
+        </div>
+        {% endfor %}
+      </div>
       {% endif %}
 
       {% if weather %}
-        <section class="result">
-          <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
-          <div class="main-weather">
-            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="icon" />
-            <div class="temp">{{ weather.temp }}°C</div>
-            <div class="desc">{{ weather.description }}</div>
+      <div class="weather-panel">
+        <div class="weather-main">
+          <div class="weather-icon-wrap">
+            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="{{ weather.description }}" />
           </div>
+          <div class="weather-info">
+            <div class="big-temp">{{ weather.temp }}<span>°C</span></div>
+            <div class="weather-desc">{{ weather.description }}</div>
+            <div class="weather-city">{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</div>
+          </div>
+        </div>
 
-          <div class="details">
-            <div class="detail-card">
-              <span class="detail-icon">🌡️</span>
-              <span class="detail-value">{{ weather.feels_like }}°C</span>
-              <span class="detail-label">Feels Like</span>
-            </div>
-            <div class="detail-card">
-              <span class="detail-icon">💧</span>
-              <span class="detail-value">{{ weather.humidity }}%</span>
-              <span class="detail-label">Humidity</span>
-            </div>
-            <div class="detail-card">
-              <span class="detail-icon">💨</span>
-              <span class="detail-value">{{ weather.wind_speed }} km/h</span>
-              <span class="detail-label">Wind</span>
-            </div>
+        <div class="detail-strip">
+          <div class="detail-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            <span class="d-val">{{ weather.feels_like }}°C</span>
+            <span class="d-lbl">Feels Like</span>
           </div>
-        </section>
-
-        {% if forecast %}
-        <section class="forecast">
-          <h3>5-Day Forecast</h3>
-          <div class="forecast-grid">
-            {% for day in forecast %}
-            <div class="forecast-card">
-              <div class="forecast-date">{{ day.date[5:] }}</div>
-              <img src="https://openweathermap.org/img/wn/{{ day.icon }}.png" alt="{{ day.description }}" />
-              <div class="forecast-temps">
-                <span class="f-max">{{ day.temp_max }}°</span>
-                <span class="f-min">{{ day.temp_min }}°</span>
-              </div>
-            </div>
-            {% endfor %}
+          <div class="detail-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            <span class="d-val">{{ weather.humidity }}%</span>
+            <span class="d-lbl">Humidity</span>
           </div>
-        </section>
-        {% endif %}
+          <div class="detail-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+            <span class="d-val">{{ weather.wind_speed }} km/h</span>
+            <span class="d-lbl">Wind</span>
+          </div>
+        </div>
+      </div>
       {% endif %}
-    </main>
+
+      {% if not weather and not error %}
+      <div class="empty-state">
+        <div class="empty-icon">🌍</div>
+        <p>Search for a city or use your location to get started</p>
+      </div>
+      {% endif %}
+    </section>
 
     <script>
       document.getElementById('gps-btn').addEventListener('click', function () {
-        if (!navigator.geolocation) {
-          alert('Geolocation is not supported by your browser.');
-          return;
-        }
-        this.textContent = '⏳';
+        if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+        this.style.opacity = '0.5';
         navigator.geolocation.getCurrentPosition(
           function (pos) {
             document.getElementById('lat-input').value = pos.coords.latitude;
@@ -84,10 +106,7 @@
             document.getElementById('city-input').value = '';
             document.getElementById('search-form').submit();
           },
-          function () {
-            alert('Unable to get your location.');
-            document.getElementById('gps-btn').textContent = '📍';
-          }
+          function () { alert('Unable to get your location.'); document.getElementById('gps-btn').style.opacity = '1'; }
         );
       });
     </script>

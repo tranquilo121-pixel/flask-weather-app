@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, render_template, request
 import requests
 
@@ -65,6 +66,7 @@ def get_forecast(city=None, lat=None, lon=None):
             w = item["weather"][0]
             forecast.append({
                 "date": date,
+                "day_name": datetime.strptime(date, "%Y-%m-%d").strftime("%a"),
                 "temp_max": round(item["main"]["temp_max"]),
                 "temp_min": round(item["main"]["temp_min"]),
                 "icon": w["icon"],
