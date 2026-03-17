@@ -67,8 +67,12 @@ def get_forecast(city=None, lat=None, lon=None):
             forecast.append({
                 "date": date,
                 "day_name": datetime.strptime(date, "%Y-%m-%d").strftime("%a"),
+                "temp": round(item["main"]["temp"]),
                 "temp_max": round(item["main"]["temp_max"]),
                 "temp_min": round(item["main"]["temp_min"]),
+                "feels_like": round(item["main"]["feels_like"]),
+                "humidity": item["main"]["humidity"],
+                "wind_speed": round(item.get("wind", {}).get("speed", 0) * 3.6, 1),
                 "icon": w["icon"],
                 "description": w["description"],
             })
