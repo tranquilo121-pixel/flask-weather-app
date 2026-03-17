@@ -9,8 +9,12 @@
   <body>
     <main class="container">
       <h1>Current Weather</h1>
-      <form method="post" class="search">
-        <input name="city" placeholder="Search a city..." value="{{ city or '' }}" autocomplete="off" />
+
+      <form method="post" class="search" id="search-form">
+        <input name="city" id="city-input" placeholder="Search a city..." value="{{ city or '' }}" autocomplete="off" />
+        <input type="hidden" name="lat" id="lat-input" />
+        <input type="hidden" name="lon" id="lon-input" />
+        <button type="button" class="gps-btn" id="gps-btn" title="Use my location">📍</button>
         <button type="submit">Search</button>
       </form>
 
@@ -21,13 +25,71 @@
       {% if weather %}
         <section class="result">
           <h2>{{ weather.city }}{% if weather.country %}, {{ weather.country }}{% endif %}</h2>
-          <div class="meta">
+          <div class="main-weather">
             <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="icon" />
             <div class="temp">{{ weather.temp }}°C</div>
             <div class="desc">{{ weather.description }}</div>
           </div>
+
+          <div class="details">
+            <div class="detail-card">
+              <span class="detail-icon">🌡️</span>
+              <span class="detail-value">{{ weather.feels_like }}°C</span>
+              <span class="detail-label">Feels Like</span>
+            </div>
+            <div class="detail-card">
+              <span class="detail-icon">💧</span>
+              <span class="detail-value">{{ weather.humidity }}%</span>
+              <span class="detail-label">Humidity</span>
+            </div>
+            <div class="detail-card">
+              <span class="detail-icon">💨</span>
+              <span class="detail-value">{{ weather.wind_speed }} km/h</span>
+              <span class="detail-label">Wind</span>
+            </div>
+          </div>
         </section>
+
+        {% if forecast %}
+        <section class="forecast">
+          <h3>5-Day Forecast</h3>
+          <div class="forecast-grid">
+            {% for day in forecast %}
+            <div class="forecast-card">
+              <div class="forecast-date">{{ day.date[5:] }}</div>
+              <img src="https://openweathermap.org/img/wn/{{ day.icon }}.png" alt="{{ day.description }}" />
+              <div class="forecast-temps">
+                <span class="f-max">{{ day.temp_max }}°</span>
+                <span class="f-min">{{ day.temp_min }}°</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
       {% endif %}
     </main>
+
+    <script>
+      document.getElementById('gps-btn').addEventListener('click', function () {
+        if (!navigator.geolocation) {
+          alert('Geolocation is not supported by your browser.');
+          return;
+        }
+        this.textContent = '⏳';
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            document.getElementById('lat-input').value = pos.coords.latitude;
+            document.getElementById('lon-input').value = pos.coords.longitude;
+            document.getElementById('city-input').value = '';
+            document.getElementById('search-form').submit();
+          },
+          function () {
+            alert('Unable to get your location.');
+            document.getElementById('gps-btn').textContent = '📍';
+          }
+        );
+      });
+    </script>
   </body>
 </html>

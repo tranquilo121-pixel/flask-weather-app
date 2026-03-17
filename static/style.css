@@ -18,26 +18,28 @@ body {
 
 .container {
   width: 100%;
-  max-width: 480px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 h1 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.75);
   text-align: center;
-  margin-bottom: 28px;
 }
 
+/* Search */
 .search {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
 }
 
-.search input {
+.search input[type="text"] {
   flex: 1;
   padding: 14px 18px;
   border: none;
@@ -51,15 +53,23 @@ h1 {
   transition: background 0.2s;
 }
 
-.search input::placeholder {
-  color: rgba(255,255,255,0.6);
+.search input[type="text"]::placeholder { color: rgba(255,255,255,0.6); }
+.search input[type="text"]:focus { background: rgba(255,255,255,0.3); }
+
+.gps-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.2);
+  font-size: 1.1rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: transform 0.15s, background 0.2s;
 }
 
-.search input:focus {
-  background: rgba(255,255,255,0.3);
-}
+.gps-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
 
-.search button {
+.search button[type="submit"] {
   padding: 14px 22px;
   border: none;
   border-radius: 16px;
@@ -72,11 +82,9 @@ h1 {
   transition: transform 0.15s, background 0.2s;
 }
 
-.search button:hover {
-  transform: scale(1.04);
-  background: #fff;
-}
+.search button[type="submit"]:hover { transform: scale(1.04); background: #fff; }
 
+/* Error */
 .error {
   background: rgba(255,255,255,0.15);
   color: #fff;
@@ -87,30 +95,32 @@ h1 {
   backdrop-filter: blur(10px);
 }
 
+/* Main result */
 .result {
   background: rgba(255,255,255,0.15);
   backdrop-filter: blur(20px);
   border-radius: 24px;
-  padding: 32px 28px;
+  padding: 28px 24px;
   border: 1px solid rgba(255,255,255,0.25);
   text-align: center;
 }
 
 .result h2 {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
-.meta {
+.main-weather {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  margin-bottom: 24px;
 }
 
-.meta img {
+.main-weather img {
   width: 80px;
   height: 80px;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
@@ -125,8 +135,83 @@ h1 {
 
 .desc {
   font-size: 1rem;
-  font-weight: 400;
   color: rgba(255,255,255,0.8);
   text-transform: capitalize;
   letter-spacing: 0.05em;
 }
+
+/* Detail cards */
+.details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.detail-card {
+  background: rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.detail-icon { font-size: 1.3rem; }
+.detail-value { font-size: 1rem; font-weight: 700; color: #fff; }
+.detail-label { font-size: 0.72rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Forecast */
+.forecast {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 20px 24px;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.forecast h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.forecast-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 10px 4px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.forecast-date {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+}
+
+.forecast-card img { width: 36px; height: 36px; }
+
+.forecast-temps {
+  display: flex;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.f-max { color: #fff; }
+.f-min { color: rgba(255,255,255,0.5); }
