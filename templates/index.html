@@ -8,6 +8,8 @@
   </head>
   <body>
 
+    <canvas id="bg-canvas"></canvas>
+
     <section class="hero">
       <div class="hero-content">
         <h1>Smarter Weather<br>for Everywhere</h1>
@@ -135,6 +137,83 @@
         document.getElementById('panel-icon').src = 'https://openweathermap.org/img/wn/' + d.icon + '@2x.png';
         document.getElementById('panel-desc').textContent = d.desc;
       }
+
+      // Animated background — wind particles + floating clouds
+      (function () {
+        var canvas = document.getElementById('bg-canvas');
+        var ctx = canvas.getContext('2d');
+
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = document.querySelector('.hero').offsetHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Wind streaks
+        var streaks = Array.from({length: 120}, function () { return makeStreak(); });
+
+        function makeStreak() {
+          return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            len: 40 + Math.random() * 80,
+            speed: 1.5 + Math.random() * 3,
+            opacity: 0.04 + Math.random() * 0.12,
+            width: 0.5 + Math.random() * 1.2
+          };
+        }
+
+        // Floating cloud blobs
+        var clouds = Array.from({length: 5}, function (_, i) { return makeCloud(i); });
+
+        function makeCloud(i) {
+          return {
+            x: (i / 5) * canvas.width - 100,
+            y: 20 + Math.random() * (canvas.height * 0.6),
+            r: 60 + Math.random() * 80,
+            speed: 0.2 + Math.random() * 0.3,
+            opacity: 0.04 + Math.random() * 0.07
+          };
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw clouds
+          clouds.forEach(function (c) {
+            ctx.beginPath();
+            ctx.ellipse(c.x, c.y, c.r * 1.6, c.r * 0.7, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + c.opacity + ')';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(c.x - c.r * 0.5, c.y + 10, c.r * 0.9, c.r * 0.55, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,' + c.opacity * 0.8 + ')';
+            ctx.fill();
+            c.x += c.speed;
+            if (c.x - c.r * 2 > canvas.width) c.x = -c.r * 2;
+          });
+
+          // Draw wind streaks
+          streaks.forEach(function (s) {
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s.x + s.len, s.y + s.len * 0.15);
+            ctx.strokeStyle = 'rgba(255,255,255,' + s.opacity + ')';
+            ctx.lineWidth = s.width;
+            ctx.stroke();
+            s.x += s.speed;
+            s.y += s.speed * 0.1;
+            if (s.x > canvas.width + 100) {
+              s.x = -s.len;
+              s.y = Math.random() * canvas.height;
+            }
+          });
+
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
 
       document.getElementById('gps-btn').addEventListener('click', function () {
         if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
